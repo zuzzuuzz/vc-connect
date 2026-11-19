@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-layout="vertical" data-theme-colors="default" data-theme="default" data-topbar="light" data-bs-theme="light" data-preloader="disable" data-layout-width="fluid" data-layout-style="default" data-layout-position="fixed" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-visibility="show" data-sidebar-image="none">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="theme-color" content="#F7F5EF">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/vc-connect-square-v2.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/vc-connect-square-v2.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <title>VC Connect — VelourCare Ortho</title>
+
+    <!-- Authentic Google Fonts matching www.velourcareortho.com -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    
+    <style id="vc-connect-theme" rel="stylesheet" type="text/css">
+        @charset "utf-8";
+
+        /* =========================================================================
+           VC CONNECT AUTHENTIC THEME (Engineered from www.velourcareortho.com)
+           Palette: Warm Alabaster (#F7F5EF), Deep Charcoal (#1E252B),
+                    Signature Gold (#B89B69), Warm Off-White (#FCFBF8)
+           ========================================================================= */
+        :root, [data-theme="default"], [data-bs-theme="light"] {
+            /* Backgrounds */
+            --vz-body-bg: #f7f5ef !important;
+            --vz-body-bg-rgb: 247, 245, 239 !important;
+            --vz-card-bg: #fcfbf8 !important;
+            --vz-card-bg-rgb: 252, 251, 248 !important;
+            --vz-card-bg-custom: #fcfbf8 !important;
+            --vz-secondary-bg: #fcfbf8 !important;
+            --vz-tertiary-bg: #f5f0e4 !important;
+            --vz-light: #f5f0e4 !important;
+            --vz-light-rgb: 245, 240, 228 !important;
+
+            /* Borders */
+            --vz-border-color: #e5e0d6 !important;
+            --vz-border-color-translucent: rgba(229, 224, 214, 0.7) !important;
+
+            /* Typography Colors */
+            --vz-body-color: #3a4249 !important;
+            --vz-body-color-rgb: 58, 66, 73 !important;
+            --vz-heading-color: #1e252b !important;
+            --vz-text-muted: #61686e !important;
+
+            /* Signature VelourCare Gold */
+            --vz-primary: #b89b69 !important;
+            --vz-primary-rgb: 184, 155, 105 !important;
+            --vz-primary-text-emphasis: #816838 !important;
+            --vz-primary-bg-subtle: #f5f0e4 !important;
+            --vz-primary-border-subtle: #d9c8a7 !important;
+
+            /* Deep Slate / Charcoal */
+            --vz-secondary: #1e252b !important;
+            --vz-secondary-rgb: 30, 37, 43 !important;
+            --vz-secondary-text-emphasis: #141a1f !important;
+            --vz-secondary-bg-subtle: #e5e0d6 !important;
+            --vz-secondary-border-subtle: #d1cbbe !important;
+
+            /* Medical Clinical Success / Refined Emerald */
+            --vz-success: #0f766e !important;
+            --vz-success-rgb: 15, 118, 110 !important;
+            --vz-success-bg-subtle: #ecfdf5 !important;
+            --vz-success-border-subtle: #a7f3d0 !important;
+            --vz-success-text-emphasis: #065f46 !important;
+
+            /* Info */
+            --vz-info: #0284c7 !important;
+            --vz-info-rgb: 2, 132, 199 !important;
+            --vz-info-bg-subtle: #e0f2fe !important;
+            --vz-info-border-subtle: #bae6fd !important;
+            --vz-info-text-emphasis: #0369a1 !important;
+
+            /* Warning / Review */
+            --vz-warning: #d97706 !important;
+            --vz-warning-rgb: 217, 119, 6 !important;
+            --vz-warning-bg-subtle: #fef3c7 !important;
+            --vz-warning-border-subtle: #fde68a !important;
+            --vz-warning-text-emphasis: #92400e !important;
+
+            /* Dark Luxury Charcoal Sidebar */
+            --vz-vertical-menu-bg: #1e252b !important;
+            --vz-vertical-menu-border: #141a1f !important;
+            --vz-vertical-menu-item-color: #d1cbbe !important;
+            --vz-vertical-menu-item-hover-color: #b89b69 !important;
+            --vz-vertical-menu-item-active-color: #ffffff !important;
+            --vz-vertical-menu-item-active-bg: rgba(184, 155, 105, 0.22) !important;
+            --vz-vertical-menu-sub-item-color: #9a9590 !important;
+            --vz-vertical-menu-sub-item-hover-color: #b89b69 !important;
+            --vz-vertical-menu-sub-item-active-color: #b89b69 !important;
+            --vz-vertical-menu-title-color: #61686e !important;
+
+            /* Topbar Navigation */
+            --vz-header-bg: #fcfbf8 !important;
+            --vz-header-border: #e5e0d6 !important;
+            --vz-header-item-color: #1e252b !important;
+            --vz-header-item-sub-color: #61686e !important;
+
+            /* Typography */
+            --vz-font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+            --vz-font-family-secondary: 'Playfair Display', Georgia, serif !important;
+        }
+
+        body {
+            background-color: #f7f5ef !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            color: #3a4249 !important;
+        }
+
+        /* Luxury Display Headings */
+        h1, h2, h3, h4, h5, .page-title-box h4, .auth-title, .card-title, .modal-title {
+            font-family: 'Playfair Display', Georgia, serif !important;
+            letter-spacing: -0.01em !important;
+            font-weight: 600 !important;
+            color: #1e252b !important;
+        }
+
+        /* Surface Cards */
+        .card {
+            background-color: #fcfbf8 !important;
+            border: 1px solid #e5e0d6 !important;
+            box-shadow: 0 2px 14px rgba(30, 37, 43, 0.04) !important;
+            border-radius: 8px !important;
+        }
+        .card-header {
+            background-color: #fcfbf8 !important;
+            border-bottom: 1px solid #e5e0d6 !important;
+        }
+
+        /* Buttons & Actions */
+        .btn-primary, .btn-primary:active, .btn-primary:focus {
+            background-color: #b89b69 !important;
+            border-color: #b89b69 !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(184, 155, 105, 0.28) !important;
+            font-weight: 600 !important;
+            border-radius: 6px !important;
+        }
+        .btn-primary:hover {
+            background-color: #9a7c4d !important;
+            border-color: #9a7c4d !important;
+            color: #ffffff !important;
+        }
+        .btn-outline-primary {
+            border-color: #b89b69 !important;
+            color: #9a7c4d !important;
+        }
+        .btn-outline-primary:hover {
+            background-color: #b89b69 !important;
+            color: #ffffff !important;
+        }
+
+        /* Tables */
+        .table {
+            --vz-table-bg: #fcfbf8 !important;
+            --vz-table-hover-bg: #f5f0e4 !important;
+            --vz-table-border-color: #e5e0d6 !important;
+        }
+        .table th {
+            background-color: #f5f0e4 !important;
+            color: #1e252b !important;
+            border-bottom: 2px solid #e5e0d6 !important;
+            font-weight: 600 !important;
+        }
+
+        /* Form Controls */
+        .form-control, .form-select {
+            background-color: #ffffff !important;
+            border-color: #e5e0d6 !important;
+            color: #1e252b !important;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #b89b69 !important;
+            box-shadow: 0 0 0 0.25rem rgba(184, 155, 105, 0.22) !important;
+        }
+
+        /* Badges & Pills */
+        .badge.bg-primary-subtle, .badge.bg-primary {
+            background-color: #f5f0e4 !important;
+            color: #816838 !important;
+            border: 1px solid #d9c8a7 !important;
+        }
+        .badge.bg-success-subtle {
+            background-color: #ecfdf5 !important;
+            color: #065f46 !important;
+            border: 1px solid #a7f3d0 !important;
+        }
+
+        /* Status Capsule Tabs */
+        .status-capsule-item.active, .nav-pills .nav-link.active {
+            background-color: #b89b69 !important;
+            color: #ffffff !important;
+        }
+
+        /* Auth Pages (Sign-in, Password Reset) */
+        .auth-page-wrapper {
+            background-color: #f7f5ef !important;
+        }
+        .auth-one-bg {
+            background-color: #1e252b !important;
+            background-image: linear-gradient(135deg, #1e252b 0%, #252d34 60%, #141a1f 100%) !important;
+        }
+        .auth-card {
+            background-color: #fcfbf8 !important;
+            border: 1px solid #e5e0d6 !important;
+            box-shadow: 0 4px 24px rgba(30, 37, 43, 0.08) !important;
+        }
+
+        /* Brand logo sizing */
+        .brand-image-frame {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 100%;
+        }
+        .auth-page-wrapper .col-lg-5 {
+            padding: 2rem 1.5rem !important;
+        }
+        .brand-image-frame--auth {
+            height: clamp(9rem, 26vw, 18rem) !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: visible !important;
+        }
+        .brand-image-frame--auth img {
+            max-height: 260px !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            height: auto !important;
+            object-fit: contain !important;
+        }
+        .brand-image-frame--full img {
+            max-height: 46px;
+            max-width: 210px;
+            object-fit: contain;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+        }
+        .brand-image-frame--compact img {
+            max-height: 36px;
+            max-width: 36px;
+            object-fit: contain;
+        }
+    </style>
+
+    <script src="/assets/vc-portal-runtime.js"></script>
+    <script type="module" crossorigin="" src="/assets/index-5EUXN9UG.js"></script>
+    <link rel="modulepreload" crossorigin="" href="/assets/vendor-Cqm5GSvB.js">
+    <link rel="modulepreload" crossorigin="" href="/assets/bootstrap-BxubwAgm.js">
+    <link rel="stylesheet" crossorigin="" href="/assets/index-G8lhJxba.css">
+    <link rel="modulepreload" as="script" crossorigin="" href="/assets/login-BOBOEDUS.js">
+    <link rel="modulepreload" as="script" crossorigin="" href="/assets/index-BC8wbgZp.js">
+    <link rel="modulepreload" as="script" crossorigin="" href="/assets/BrandImage-DXYtpoY6.js">
+    <link rel="modulepreload" as="script" crossorigin="" href="/assets/_plugin-vue_export-helper-DlAUqK2U.js">
+    <link rel="stylesheet" crossorigin="" href="/assets/BrandImage-DazurleX.css">
+    <link rel="modulepreload" as="script" crossorigin="" href="/assets/LanguageSwitcher-BXWnAtQA.js">
+    <link rel="modulepreload" as="script" crossorigin="" href="/assets/autoplay-l0sNRNKZ.js">
+    <link rel="stylesheet" crossorigin="" href="/assets/pagination-DxHKOkZ5.css">
+</head>
+<body data-aos-easing="ease-out-back" data-aos-duration="1000" data-aos-delay="0">
+    <div id="file-protocol-warning" style="display:none;background:#dc3545;color:#fff;padding:16px;text-align:center;font-family:system-ui,sans-serif;font-size:15px;font-weight:bold;z-index:9999999;position:fixed;top:0;left:0;right:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+        ⚠️ Browser security blocks JavaScript modules when opening HTML files directly from a folder (file:///).<br>
+        Please open <a href="http://localhost:8000" style="color:#ffc107;text-decoration:underline;">http://localhost:8000</a> in your web browser, or double-click <code>start-velourcare-cloud.bat</code>!
+    </div>
+    <div id="app"></div>
+
+    <!-- Legal Policy Links -->
+    <div style="position: fixed; bottom: 8px; left: 16px; z-index: 9999; font-size: 11px; background: rgba(255,255,255,0.92); backdrop-filter: blur(4px); padding: 5px 12px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.08);">
+        <a href="/privacy-policy" target="_blank" style="color: #495057; text-decoration: none; font-weight: 600;">Privacy Policy</a> &nbsp;|&nbsp;
+        <a href="/terms-of-service" target="_blank" style="color: #495057; text-decoration: none; font-weight: 600;">Terms of Service</a> &nbsp;|&nbsp;
+        <span style="color: #816838; font-weight: 600;"><i class="ri-shield-check-line"></i> VC Connect &bull; Privacy &amp; Compliance Notice</span>
+    </div>
+
+</body>
+</html>

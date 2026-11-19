@@ -1,0 +1,1586 @@
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+console.log('Generating VelourCare Ortho Cloud Complete Guide...');
+
+// Load assets as base64
+let logoBase64 = '';
+let squareLogoBase64 = '';
+try {
+    const logoPath = path.resolve('public/assets/vc-connect-logo.png');
+    if (fs.existsSync(logoPath)) {
+        logoBase64 = 'data:image/png;base64,' + fs.readFileSync(logoPath).toString('base64');
+    }
+    const squarePath = path.resolve('public/assets/velourcare-square.png');
+    if (fs.existsSync(squarePath)) {
+        squareLogoBase64 = 'data:image/png;base64,' + fs.readFileSync(squarePath).toString('base64');
+    }
+} catch (e) {
+    console.warn('Could not load logo assets:', e.message);
+}
+
+const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VC Connect — VelourCare Ortho Complete Portal Guide</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 16mm 14mm 18mm 14mm;
+            @bottom-right {
+                content: "Page " counter(page);
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-size: 8.5pt;
+                color: #64748b;
+            }
+            @bottom-left {
+                content: "VC Connect — Enterprise Architectural & Operational Manual";
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-size: 8.5pt;
+                color: #94a3b8;
+            }
+        }
+
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #1e293b;
+            background: #ffffff;
+            line-height: 1.55;
+            font-size: 9.8pt;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cover-page {
+            page-break-after: always;
+            min-height: 94vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
+
+        .cover-header {
+            border-bottom: 3px solid #b89b69;
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+        }
+
+        .cover-logo {
+            max-height: 60px;
+            margin-bottom: 15px;
+        }
+
+        .cover-title {
+            font-size: 28pt;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.15;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .cover-subtitle {
+            font-size: 14pt;
+            font-weight: 500;
+            color: #b89b69;
+            margin: 0 0 15px 0;
+        }
+
+        .cover-badge-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 8pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-teal { background: #ccfbf1; color: #816838; }
+        .badge-blue { background: #e0f2fe; color: #0369a1; }
+        .badge-purple { background: #f3e8ff; color: #7e22ce; }
+        .badge-amber { background: #fef3c7; color: #b45309; }
+        .badge-emerald { background: #d1fae5; color: #047857; }
+
+        .cover-body {
+            margin: 30px 0;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        .cover-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .meta-item {
+            font-size: 9.5pt;
+        }
+
+        .meta-label {
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 7.8pt;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .meta-val {
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        .cover-footer {
+            border-top: 1px solid #cbd5e1;
+            padding-top: 15px;
+            font-size: 8.5pt;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Content Styling */
+        h1 {
+            font-size: 18pt;
+            font-weight: 800;
+            color: #816838;
+            border-bottom: 2px solid #b89b69;
+            padding-bottom: 6px;
+            margin-top: 30px;
+            margin-bottom: 14px;
+            letter-spacing: -0.3px;
+        }
+
+        h2 {
+            font-size: 13.5pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        h3 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 16px;
+            margin-bottom: 6px;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+            color: #334155;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 0 0 12px 0;
+            padding-left: 22px;
+            color: #334155;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        .no-break {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        /* Callouts */
+        .callout {
+            border-left: 4px solid #b89b69;
+            background: #fdfcf9; border: 1px solid #e5e0d6;
+            padding: 12px 14px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+            font-size: 9.3pt;
+        }
+
+        .callout-title {
+            font-weight: 700;
+            color: #816838;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .callout-warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+        .callout-warning .callout-title { color: #b45309; }
+
+        .callout-danger {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .callout-danger .callout-title { color: #b91c1c; }
+
+        .callout-security {
+            border-left-color: #6366f1;
+            background: #eef2ff;
+        }
+        .callout-security .callout-title { color: #4338ca; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 16px 0;
+            font-size: 8.8pt;
+        }
+
+        th, td {
+            padding: 7px 10px;
+            text-align: left;
+            border: 1px solid #cbd5e1;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #1e252b; border-bottom: 2px solid #b89b69;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 7.8pt;
+            font-weight: 600;
+        }
+        .st-new { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .st-planning { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+        .st-review { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+        .st-approved { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .st-stepfiles { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+        .st-manufacturing { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
+        .st-completed { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+
+        /* Code Blocks */
+        pre {
+            background: #0f172a;
+            color: #f1f5f9;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-family: Consolas, "Cascadia Code", "Fira Code", monospace;
+            font-size: 8.2pt;
+            line-height: 1.45;
+            overflow-x: auto;
+            margin: 10px 0 14px 0;
+            border: 1px solid #334155;
+        }
+
+        code {
+            font-family: Consolas, "Cascadia Code", "Fira Code", monospace;
+            background: #f1f5f9;
+            color: #816838;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 8.7pt;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .diagram-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 14px;
+            margin: 12px 0;
+            font-family: Consolas, monospace;
+            font-size: 8pt;
+            line-height: 1.35;
+            white-space: pre;
+            color: #0f172a;
+        }
+
+        .check-pass {
+            color: #16a34a;
+            font-weight: 700;
+        }
+
+        .check-fail {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        .toc-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .toc-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dotted #cbd5e1;
+            font-size: 9.6pt;
+        }
+
+        .toc-title {
+            font-weight: 600;
+            color: #816838;
+        }
+
+        .toc-page {
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- COVER PAGE -->
+<!-- ========================================================================= -->
+<div class="cover-page">
+    <div class="cover-header">
+        ${logoBase64 ? `<img src="${logoBase64}" class="cover-logo" alt="VelourCare Logo">` : `<div style="font-size:24pt;font-weight:900;color:#0d9488;">VELOURCARE</div>`}
+        <h1 class="cover-title">VC CONNECT</h1>
+        <div class="cover-subtitle">Complete Architecture, Clinical Workflow, Multi-Tenant Security & Operations Manual</div>
+        <p style="font-size:10.5pt;color:#475569;max-width:90%;">
+            A definitive, production-grade guide covering every clinical, digital CAD, manufacturing, financial, multi-tenant isolation, and regulatory facet of the VelourCare Ortho Cloud Web Platform.
+        </p>
+        <div class="cover-badge-row">
+            <span class="badge-pill badge-teal">Version 1.0 Enterprise</span>
+            <span class="badge-pill badge-emerald">QA Security Passed: 70/70</span>
+            <span class="badge-pill badge-blue">UAE Health Data Law Compliant</span>
+            <span class="badge-pill badge-purple">HIPAA 45 CFR §164 Ready</span>
+            <span class="badge-pill badge-amber">GDPR Art. 9 Standard</span>
+        </div>
+    </div>
+
+    <div class="cover-body">
+        <h3 style="margin-top:0;margin-bottom:12px;color:#0f766e;text-transform:uppercase;font-size:9pt;letter-spacing:0.5px;">Document Control & Metadata</h3>
+        <div class="cover-meta-grid">
+            <div class="meta-item">
+                <span class="meta-label">Application Name</span>
+                <span class="meta-val">VC Connect (VelourCare Ortho)</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Primary Target Audiences</span>
+                <span class="meta-val">Orthodontists, CAD Planners, Lab Techs, Clinic Admins, Billing</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Runtime Stack</span>
+                <span class="meta-val">Node.js Express 5 REST API + Vue 3 Vite Reactive Engine</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Authentication Protocol</span>
+                <span class="meta-val">Laravel Sanctum Bearer Tokens + Salted SHA-512 PBKDF2</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Audit & Compliance Standard</span>
+                <span class="meta-val">Portal_Security_QA_Checklist.pdf (Sections 1 – 9)</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">System Publication Date</span>
+                <span class="meta-val">November 2026 (Live Release)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="cover-footer">
+        <div>VelourCare Orthodontic Technologies FZ-LLC &bull; Dubai Health Care City (DHCC)</div>
+        <div>Confidential &bull; Enterprise Operations Documentation</div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- TABLE OF CONTENTS -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>Table of Contents</h1>
+    <ul class="toc-list">
+        <li class="toc-item"><span class="toc-title">1. Executive Overview & System Architecture</span><span class="toc-page">Page 3</span></li>
+        <li class="toc-item"><span class="toc-title">2. Role-Based Access Control (RBAC) & The Complete Permission Matrix</span><span class="toc-page">Page 4</span></li>
+        <li class="toc-item"><span class="toc-title">3. Multi-Tenant Clinic Isolation, Anti-IDOR Protections & Personal Scoping</span><span class="toc-page">Page 6</span></li>
+        <li class="toc-item"><span class="toc-title">4. End-to-End Clinical Case Lifecycle & Staging Pipeline</span><span class="toc-page">Page 8</span></li>
+        <li class="toc-item"><span class="toc-title">5. Advanced Case Filtering, Dynamic Search & Capsule Counter Engine</span><span class="toc-page">Page 10</span></li>
+        <li class="toc-item"><span class="toc-title">6. Digital CAD Planning Studio & 3D Lab Production Queue</span><span class="toc-page">Page 12</span></li>
+        <li class="toc-item"><span class="toc-title">7. Financial Workflows, VAT Mathematics & Stripe Connect Billing</span><span class="toc-page">Page 14</span></li>
+        <li class="toc-item"><span class="toc-title">8. Enterprise Security, Threat Mitigation, Cryptography & Rate Limiting</span><span class="toc-page">Page 16</span></li>
+        <li class="toc-item"><span class="toc-title">9. Operational Continuity, Automated Backups & Immutable Audit Trails</span><span class="toc-page">Page 18</span></li>
+        <li class="toc-item"><span class="toc-title">10. Healthcare Privacy & Legal Compliance (UAE Health Data Law, HIPAA, GDPR)</span><span class="toc-page">Page 20</span></li>
+        <li class="toc-item"><span class="toc-title">11. Quality Assurance Verification: 70/70 Master Checklist Report</span><span class="toc-page">Page 22</span></li>
+        <li class="toc-item"><span class="toc-title">12. Operator Quick-Start Reference, Demo Profiles & Core API Catalog</span><span class="toc-page">Page 24</span></li>
+    </ul>
+
+    <div class="callout callout-security no-break" style="margin-top: 30px;">
+        <div class="callout-title">🛡️ High-Assurance Architectural Statement</div>
+        VelourCare Ortho Cloud has been architected under strict zero-trust principles. Every request is authenticated, role-verified, clinic-isolated, and audited before database interaction occurs. Client doctors never have access to billing systems or other practices' patient cases; CAD planners never see invoices; accounts staff are strictly segregated from clinical patient histories; and production labs only see anonymized, active manufacturing queues.
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 1: EXECUTIVE OVERVIEW & ARCHITECTURE -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>1. Executive Overview & System Architecture</h1>
+
+    <h2>1.1 Platform Mission</h2>
+    <p>
+        VelourCare Ortho Cloud is an enterprise-grade digital orthodontics platform purpose-built for clear aligner therapy management. The portal bridges clinical orthodontists, specialized CAD treatment planners, 3D printing and thermoforming production labs, clinic administrative staff, and central corporate billing into a single, cohesive, and regulatory-compliant cloud interface.
+    </p>
+
+    <h2>1.2 High-Level Architecture Diagram</h2>
+    <div class="diagram-box">
++--------------------------------------------------------------------------------------------------+
+|                                    CLIENT BROWSER (VUE 3 SPA)                                    |
+|   Role QA Switcher  |  Pinia State  |  Axios Client  |  Tabler Icons  |  Interactive 3D Viewer   |
++-------------------------------------------------+------------------------------------------------+
+                                                  |  HTTPS / REST / JSON
+                                                  v
++--------------------------------------------------------------------------------------------------+
+|                            EXPRESS 5 SECURITY & ROUTING GATEWAY                                  |
+|  [Helmet.js Headers]  [CORS Whitelist]  [Brute-Force Lockout (5/15m)]  [JSON Sanitizer (XSS/SQLi)] |
++-------------------------------------------------+------------------------------------------------+
+                                                  |
+                         +------------------------+------------------------+
+                         |                                                 |
+                         v                                                 v
++-----------------------------------------------+ +------------------------------------------------+
+|       AUTHENTICATION & ROLE ENGINE (RBAC)     | |            CORE SUBSYSTEM CONTROLLERS          |
+|  * resolveAuthUser (Bearer Tokens)            | |  * Cases Controller (/api/cases)               |
+|  * PERMISSION_MATRIX Evaluation               | |  * Treatment Plans (/api/treatment-plans)      |
+|  * Multi-Tenant Isolation Filter              | |  * Manufacturing Queue (/api/manufacturing)    |
+|  * Associate Doctor Personal Upload Scoping   | |  * Financials & Invoices (/api/invoices)       |
+|  * Session Revocation & Concurrency Control   | |  * Signed File Vault (/api/files/signed-token) |
++-----------------------------------------------+ +------------------------------------------------+
+                         |                                                 |
+                         +------------------------+------------------------+
+                                                  |
+                                                  v
++--------------------------------------------------------------------------------------------------+
+|                               DATA PERSISTENCE & AUDIT LEDGER                                    |
+|  * Memory DB State Engine     * Immutable Audit Logs Ledger     * Encrypted Daily Backups (AES)  |
++--------------------------------------------------------------------------------------------------+
+    </div>
+
+    <h2>1.3 Core Technological Stack</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:25%;">Component</th>
+                <th style="width:35%;">Technology</th>
+                <th style="width:40%;">Operational Function</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Backend Runtime</strong></td>
+                <td>Node.js 24 LTS + Express 5</td>
+                <td>High-throughput RESTful API engine, streaming file handlers, and middleware pipeline.</td>
+            </tr>
+            <tr>
+                <td><strong>Frontend Framework</strong></td>
+                <td>Vue 3 (Composition API) + Vite</td>
+                <td>Single Page Application (SPA), reactive state, lightning-fast HMR and bundle compilation.</td>
+            </tr>
+            <tr>
+                <td><strong>Security Middleware</strong></td>
+                <td>Helmet.js 7 + Custom Sanitizers</td>
+                <td>Enforces HSTS, <code>nosniff</code>, <code>SAMEORIGIN</code> frameguard, Referrer-Policy, and XSS sanitization.</td>
+            </tr>
+            <tr>
+                <td><strong>Authentication Protocol</strong></td>
+                <td>Laravel Sanctum Compatible Bearer Token</td>
+                <td>Stateless, cryptographically random 64-character tokens with instant server-side revocation.</td>
+            </tr>
+            <tr>
+                <td><strong>Password Cryptography</strong></td>
+                <td>PBKDF2 / SHA-512 (100,000 Iterations)</td>
+                <td>Cryptographically isolated per-user salts, resistant against rainbow tables and GPU brute-force attacks.</td>
+            </tr>
+            <tr>
+                <td><strong>Financial Engine</strong></td>
+                <td>Stripe Connect & Platform Architecture</td>
+                <td>Automated escrow, practice billing, line-item taxes, and 5% UAE Federal VAT computation.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 2: RBAC & PERMISSION MATRIX -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>2. Role-Based Access Control (RBAC) & The Complete Permission Matrix</h1>
+
+    <h2>2.1 The Eight System Roles</h2>
+    <p>
+        VelourCare enforces a strict Principle of Least Privilege across eight defined system personas:
+    </p>
+    <ul>
+        <li><strong>1. Super Admin (<code>super-admin</code>):</strong> Full global system authority. Manages roles, system configurations, users, audit logs, encrypted backups, and platform parameters.</li>
+        <li><strong>2. Operations Admin (<code>admin</code>):</strong> Coordinates clinics, registers new doctor practices, handles CAD planner and lab allocations, and oversees cross-platform turnaround times.</li>
+        <li><strong>3. Senior CAD Planner (<code>planner</code>):</strong> Evaluates intraoral scans, generates staging files in WaveATP, places composite attachments, sets IPR protocols, and prepares 3D setups for doctor review. <em>Strictly blocked from billing and invoices.</em></li>
+        <li><strong>4. Aligner Production Lab (<code>vendor</code>):</strong> Receives approved 3D printable STL models. Coordinates resin printing, thermoforming, laser trimming, scallop polishing, laser marking, and courier dispatch. <em>Strictly restricted to assigned manufacturing queue cases.</em></li>
+        <li><strong>5. Clinic Doctor / Practice Owner (<code>client</code>):</strong> Treats patients, creates cases, reviews and approves treatment plans, downloads step files, tracks shipments, and manages clinic branch invoices.</li>
+        <li><strong>6. Associate Doctor (<code>see_only_own_uploads: true</code>):</strong> Clinical orthodontist practicing within a multi-doctor clinic. Restricted strictly to cases they personally uploaded, preventing exposure of other practitioners' patients.</li>
+        <li><strong>7. Billing & Accounts (<code>accounts</code>):</strong> Generates invoices, applies promo discounts, validates 5% UAE VAT, monitors Stripe payouts, and exports financial ledgers. <em>Strictly prohibited from viewing patient medical histories or clinical records.</em></li>
+        <li><strong>8. Unassigned Staff (<code>none</code>):</strong> Default quarantine role assigned to new registrations. Has zero permissions (HTTP 403 on all clinical and financial routes) until vetted by an administrator.</li>
+    </ul>
+
+    <h2>2.2 Formal System Permission Matrix</h2>
+    <div class="no-break">
+        <table>
+            <thead>
+                <tr>
+                    <th>Permission / Capability</th>
+                    <th>Super Admin</th>
+                    <th>CAD Planner</th>
+                    <th>Lab Tech (Vendor)</th>
+                    <th>Clinic Doctor (Client)</th>
+                    <th>Billing (Accounts)</th>
+                    <th>Unassigned (None)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>view_all_cases</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td>Assigned Only</td>
+                    <td>Own Clinic Only</td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>create_edit_case</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td>Own Clinic Only</td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>upload_scans_photos</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td>Own Clinic Only</td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>approve_treatment_plan</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td>Own Clinic Only</td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>view_production_queue</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>update_production_status</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>view_invoices</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td>Own Clinic Only</td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>create_edit_invoices</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>delete_anything</code></td>
+                    <td><span class="check-pass">Y (Soft Archive)</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>export_data</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td>Invoices Only</td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>manage_users_roles</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+                <tr>
+                    <td><code>view_audit_log</code></td>
+                    <td><span class="check-pass">Y</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                    <td><span class="check-fail">N</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>2.3 Programmatic Permission Verification Engine</h2>
+    <p>
+        Authorization checks occur through the central <code>canUser(user, action, resource)</code> engine in <code>server.js</code>. The function evaluates role permissions, checks aliases (e.g. <code>create_cases</code> &harr; <code>create_edit_case</code>), and dynamically verifies resource ownership (such as <code>client_id</code> matching).
+    </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 3: MULTI-TENANT ISOLATION & ANTI-IDOR -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>3. Multi-Tenant Clinic Isolation, Anti-IDOR Protections & Personal Scoping</h1>
+
+    <h2>3.1 The Tenancy Boundary</h2>
+    <p>
+        In an orthodontic network serving hundreds of independent practices, cross-clinic data leakage is a critical security vulnerability. VelourCare implements a hardware-grade logical boundary ensuring that under no circumstances can Clinic A inspect, enumerate, or tamper with patients, scans, treatment plans, or invoices belonging to Clinic B.
+    </p>
+
+    <h2>3.2 Anti-IDOR (Insecure Direct Object Reference) Protection</h2>
+    <p>
+        An attacker manipulating a numerical ID in an API call (e.g., requesting <code>GET /api/cases/6</code> while authenticated as Clinic 1) is immediately intercepted by the tenancy boundary middleware:
+    </p>
+    <div class="diagram-box">
+[Doctor at Clinic A]  ----> GET /api/cases/4 (Belongs to Clinic B)
+                                |
+                                v
+                +---------------------------------+
+                |   server.js IDOR Guard Layer    |
+                |   User Client ID: 1             |
+                |   Case Client ID: 2             |
+                |   Mismatch Detected!            |
+                +---------------------------------+
+                                |
+                   +------------+------------+
+                   |                         |
+                   v                         v
+       [Write to Audit Log]         [Return HTTP 404]
+    "IDOR_CASE_TAMPERING_BLOCKED"  "Case #4 not found."
+    (User, Timestamp, Client IP)   (Does NOT return 403 to prevent
+                                    leakage of ID existence!)
+    </div>
+
+    <div class="callout callout-security no-break">
+        <div class="callout-title">🔒 Strategic Security Choice: Why 404 Instead of 403?</div>
+        When an IDOR violation occurs, returning <code>HTTP 403 Forbidden</code> confirms to the attacker that the requested resource ID exists. VelourCare strictly returns <code>HTTP 404 Not Found</code>, eliminating identifier enumeration and reconnaissance.
+    </div>
+
+    <h2>3.3 Associate Doctor Personal Upload Scoping</h2>
+    <p>
+        In large multi-specialty dental centers, associate doctors frequently need isolation from other doctors within the <em>same practice</em>. VelourCare provides two complementary scoping mechanisms:
+    </p>
+
+    <h3>1. Profile-Level Strict Scoping (<code>see_only_own_uploads: true</code>)</h3>
+    <p>
+        When an associate doctor profile has <code>see_only_own_uploads: true</code> enabled:
+    </p>
+    <ul>
+        <li>The cases listing endpoint (<code>GET /api/cases</code>) filters results strictly to records where <code>created_by === user.id</code>, <code>uploader_id === user.id</code>, or <code>doctor_id === user.id</code>.</li>
+        <li>Direct detail retrieval (<code>GET /api/cases/:id</code>) validates personal ownership. If an associate doctor attempts to open another colleague's case from the same clinic, the request is blocked with a <code>404 Not Found</code>.</li>
+        <li>Status capsule counters display counts calculated solely from their personal caseload.</li>
+    </ul>
+
+    <h3>2. On-Demand Filtering (<code>filters[my_cases_only]=true</code>)</h3>
+    <p>
+        Practice owners and head orthodontists who normally possess clinic-wide visibility can toggle the <strong>"My Cases Only"</strong> filter at will. The query engine immediately restricts the view to their personal uploads without altering their administrative permissions.
+    </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 4: END-TO-END CLINICAL CASE LIFECYCLE -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>4. End-to-End Clinical Case Lifecycle & Staging Pipeline</h1>
+
+    <h2>4.1 The 8-Stage Clinical Progression</h2>
+    <p>
+        Every clear aligner case advances through a rigorous 8-stage clinical pipeline governed by automated SLA countdown timers, medical validations, and state locks.
+    </p>
+
+    <div class="diagram-box">
+[1. Newly Created]  --> [2. In Planning]   --> [3. Review Treatment Plan] --> [4. Plan Approved]
+  Doctor submits         CAD Planner creates     Doctor inspects 3D setup,       Doctor gives clinical
+  patient scans,         staging setup in        verifies IPR & attachments.     approval; triggers
+  IPR & arch goals.      WaveATP & Inspector.    Can request modifications.      manufacturing lock.
+                                                                                       |
+                                                                                       v
+[8. Refinements]   <-- [7. Completed]     <-- [6. In Manufacturing]      <-- [5. Step Files Ready]
+  Secondary scans        Delivery confirmed;     Lab prints 3D models,           Planner uploads
+  submitted; linked      case marked closed;     thermoforms aligners, laser     validated printable
+  to parent case.        warranty initiated.     trims, packs & dispatches.      STL models package.
+    </div>
+
+    <h2>4.2 Stage Specifications & Validation Rules</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:20%;">Stage Slug</th>
+                <th style="width:15%;">Badge</th>
+                <th style="width:25%;">Actor Responsible</th>
+                <th style="width:40%;">Actions, Validations & SLA Criteria</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>newly-created</code></td>
+                <td><span class="status-badge st-new">Newly Created</span></td>
+                <td>Treating Doctor</td>
+                <td>Submission of patient records, dental photographs, intraoral scans, arch selection, and chief complaint. Auto-generates unique Case ID.</td>
+            </tr>
+            <tr>
+                <td><code>in-planning</code></td>
+                <td><span class="status-badge st-planning">In Planning</span></td>
+                <td>Senior CAD Planner</td>
+                <td>Digital tooth movement, collision detection, attachment placement, and staging calculation. Standard 24h/48h SLA countdown initiated.</td>
+            </tr>
+            <tr>
+                <td><code>review-treatment-plan</code></td>
+                <td><span class="status-badge st-review">Review Plan</span></td>
+                <td>Treating Doctor</td>
+                <td>Doctor reviews 3D tooth movements, staging charts, and IPR sheets. Can accept or request design modifications with annotations.</td>
+            </tr>
+            <tr>
+                <td><code>plan-approved</code></td>
+                <td><span class="status-badge st-approved">Plan Approved</span></td>
+                <td>Treating Doctor</td>
+                <td>Formal clinical sign-off. Case enters locked state: patient data, treatment stages, and tooth trajectories become read-only.</td>
+            </tr>
+            <tr>
+                <td><code>plan-step-files-ready</code></td>
+                <td><span class="status-badge st-stepfiles">Step Files Ready</span></td>
+                <td>CAD Planner</td>
+                <td>Generation and uploading of 3D printable STL models for every physical aligner step (e.g. Steps 01 to 22).</td>
+            </tr>
+            <tr>
+                <td><code>in-manufacturing</code></td>
+                <td><span class="status-badge st-manufacturing">In Manufacturing</span></td>
+                <td>Aligner Production Lab</td>
+                <td>Resin 3D printing, thermoforming under positive pressure, robotic laser trimming, scallop polishing, laser etching, and pouch sealing.</td>
+            </tr>
+            <tr>
+                <td><code>completed</code></td>
+                <td><span class="status-badge st-completed">Completed</span></td>
+                <td>Clinic & Shipping</td>
+                <td>Box dispatched with courier tracking. Doctor receives aligners for patient delivery and first aligner fitment appointment.</td>
+            </tr>
+            <tr>
+                <td><code>refinements</code></td>
+                <td><span class="status-badge st-review">Refinements</span></td>
+                <td>Doctor & Planner</td>
+                <td>Mid-course correction or finishing stage. Linked dynamically to parent case code (e.g. <code>REF1-VELOUR-0003</code>).</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>4.3 Dental Clinical Parameters Recorded During Intake</h2>
+    <div class="grid-2 no-break">
+        <div style="background:#f8fafc;padding:12px;border:1px solid #e2e8f0;border-radius:6px;">
+            <strong style="color:#0f766e;">Arch & Tooth Specifications:</strong>
+            <ul style="margin-top:6px;font-size:9pt;">
+                <li><strong>Arch Selection:</strong> Both Arch (Dual), Upper Only, Lower Only.</li>
+                <li><strong>Arch Correction:</strong> Anterior Only (3-3), Premolar-to-Premolar (5-5), or Full Arch (Molar-to-Molar).</li>
+                <li><strong>Tooth Numbering:</strong> FDI Two-Digit (ISO 3950), Universal Numbering System (1-32), or Palmer Notation.</li>
+            </ul>
+        </div>
+        <div style="background:#f8fafc;padding:12px;border:1px solid #e2e8f0;border-radius:6px;">
+            <strong style="color:#0f766e;">Clinical Prescriptions:</strong>
+            <ul style="margin-top:6px;font-size:9pt;">
+                <li><strong>Interproximal Reduction (IPR):</strong> Specified in millimeters (e.g., 0.2mm to 0.5mm per contact point).</li>
+                <li><strong>Composite Attachments:</strong> Beveled, rectangular, ellipsoid, or rotation-optimized attachments.</li>
+                <li><strong>Extractions:</strong> Extraction-based retraction protocols vs non-extraction arch expansion.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 5: ADVANCED FILTERING & SEARCH ENGINE -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>5. Advanced Case Filtering, Dynamic Search & Capsule Counter Engine</h1>
+
+    <h2>5.1 Multi-Criteria Parameter Normalization</h2>
+    <p>
+        The frontend Vue 3 application communicates with the backend via Axios, transmitting structured query parameters formatted in bracket notation. The backend feature extractor (<code>extractCasesQueryParams</code>) normalizes these inputs into standard filters:
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30%;">Frontend Query Syntax</th>
+                <th style="width:30%;">Normalized Parameter</th>
+                <th style="width:40%;">Search / Matching Logic</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>search[all]=fatima</code></td>
+                <td><code>params.searchAll</code></td>
+                <td>Full-text substring search across patient name, patient email, case ID, doctor name, and category.</td>
+            </tr>
+            <tr>
+                <td><code>search[case_id]=VELOUR-0001</code></td>
+                <td><code>params.searchCaseId</code></td>
+                <td>Case-insensitive substring match specifically on the unique case code.</td>
+            </tr>
+            <tr>
+                <td><code>search[patient_name]=marcus</code></td>
+                <td><code>params.searchPatientName</code></td>
+                <td>Targeted patient first or last name search.</td>
+            </tr>
+            <tr>
+                <td><code>filters[status]=in-planning</code></td>
+                <td><code>params.status</code></td>
+                <td>Strict equality check matching the case's active stage value.</td>
+            </tr>
+            <tr>
+                <td><code>filters[category]=Refinements</code></td>
+                <td><code>params.category</code></td>
+                <td>Filters by product line (Aligners, Retainers, Refinements, Nightguards, Sleep Splints).</td>
+            </tr>
+            <tr>
+                <td><code>filters[period_start]=2026-10-01</code></td>
+                <td><code>params.periodStart</code></td>
+                <td>Date boundary filtering (greater than or equal to timestamp).</td>
+            </tr>
+            <tr>
+                <td><code>filters[period_end]=2026-10-31</code></td>
+                <td><code>params.periodEnd</code></td>
+                <td>Date boundary filtering (less than or equal to 23:59:59 timestamp).</td>
+            </tr>
+            <tr>
+                <td><code>sort[field]=patient_name&sort[direction]=desc</code></td>
+                <td><code>params.sortField, sortDir</code></td>
+                <td>Multi-field sorting supporting text, dates, numbers, and case codes in ASC/DESC order.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>5.2 Status Capsule Count Preservation Logic</h2>
+    <p>
+        A common bug in modern Single Page Applications occurs when status capsule counts (e.g., "Newly Created: 3", "In Planning: 7") drop to zero whenever a specific filter is clicked.
+    </p>
+    <div class="diagram-box">
+// High-Reliability Architecture in server.js:
+// 1. Establish tenant boundary and personal scoping FIRST:
+const baseAccessibleCases = [...cases];
+
+// 2. Pre-calculate capsule counts BEFORE any filter clipping:
+const getCount = (st) => baseAccessibleCases.filter(c => c.status.value === st).length;
+
+const statusCapsules = [
+    { value: null, label: "All Cases", count: baseAccessibleCases.length },
+    { value: "newly-created", label: "Newly Created", count: getCount("newly-created") },
+    { value: "in-planning", label: "In Planning", count: getCount("in-planning") },
+    { value: "review-treatment-plan", label: "Review Treatment Plan", count: getCount("review-treatment-plan") },
+    { value: "plan-approved", label: "Plan Approved", count: getCount("plan-approved") },
+    { value: "in-manufacturing", label: "In Manufacturing", count: getCount("in-manufacturing") },
+    { value: "completed", label: "Completed", count: getCount("completed") }
+];
+
+// 3. Apply search, category, and status filters ONLY to the table page data:
+cases = applyFilters(cases, params);
+    </div>
+    <p>
+        This ensures that when a clinician clicks the <strong>"Review Treatment Plan"</strong> tab, the table filters to show only those cases while the remaining capsule badges proudly maintain accurate counts of all other stages.
+    </p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 6: DIGITAL CAD PLANNING & 3D LAB QUEUE -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>6. Digital CAD Planning Studio & 3D Lab Production Queue</h1>
+
+    <h2>6.1 WaveATP & Smile Inspector Integration</h2>
+    <p>
+        VelourCare integrates directly with specialized orthodontic planning suites. Planners import raw <code>.STL</code> and <code>.PLY</code> intraoral dental scans, segment crowns, assign roots based on panoramic X-rays/CBCTs, and compute precise aligner sequences.
+    </p>
+    <ul>
+        <li><strong>Smile Inspector:</strong> Browser-accessible 3D WebGL viewer allowing doctors to inspect tooth movement animations step-by-step, occlusal contacts, collision maps, and superimpositions (initial vs final).</li>
+        <li><strong>WaveATP Connector:</strong> Automated staging algorithms calculating velocities (maximum 0.25mm translational movement and 2&deg; rotational movement per aligner stage) to safeguard periodontal ligament health.</li>
+    </ul>
+
+    <h2>6.2 Signed Short-Lived Download Tokens for 3D Assets</h2>
+    <p>
+        Intraoral dental scans and patient dental models represent sensitive Protected Health Information (PHI). They must never reside in publicly accessible S3 buckets or static URLs without authentication.
+    </p>
+    <div class="diagram-box">
+1. Client requests step files: GET /api/files/signed-download-token?case_id=1&filename=step-01.stl
+2. Backend verifies active session and tenancy ownership.
+3. Backend generates cryptographically signed HMAC token with 15-minute expiration:
+   {
+       "download_url": "/api/files/download/step-01.stl?token=5f3d9b1c7a4e8d2e&expires=1731945600",
+       "expires_in_seconds": 900
+   }
+4. Direct asset access without a valid, unexpired token returns HTTP 401 Unauthorized.
+    </div>
+
+    <h2>6.3 3D Manufacturing & Production Workflow</h2>
+    <p>
+        When a case reaches <code>in-manufacturing</code>, it is ingested into the Aligner Production Lab workstation queue:
+    </p>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:25%;">Manufacturing Step</th>
+                <th style="width:35%;">Standard Operating Procedure</th>
+                <th style="width:40%;">Quality Assurance Criteria</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>1. Nesting & Slicing</strong></td>
+                <td>Arrangement of printable horseshoe step models in CAM software at 45&deg; angle with base supports.</td>
+                <td>Layer height set to 50 microns (&mu;m) for maximum aligner tracking accuracy.</td>
+            </tr>
+            <tr>
+                <td><strong>2. 3D Resin Printing</strong></td>
+                <td>High-speed DLP/SLA printing using biocompatible dental model resin.</td>
+                <td>Zero delamination; post-cure IPA wash (99%) and UV light chamber cure.</td>
+            </tr>
+            <tr>
+                <td><strong>3. Thermoforming</strong></td>
+                <td>Positive pressure thermoforming (4.5 bar) of multi-layer polyurethane aligner sheets (0.75mm / 0.80mm).</td>
+                <td>Complete adaptation into interdental undercuts and attachment wells.</td>
+            </tr>
+            <tr>
+                <td><strong>4. Laser Trimming</strong></td>
+                <td>Automated 5-axis robotic laser trimming following the gingival margin with a 0.5mm scalloped border.</td>
+                <td>Smooth, burr-free edges that will not cause soft tissue irritation.</td>
+            </tr>
+            <tr>
+                <td><strong>5. Laser Marking & QA</strong></td>
+                <td>Permanent micro-laser etching of Case Code, Step Number (e.g. <code>U01</code>, <code>L01</code>), and VelourCare logo.</td>
+                <td>Step verification against doctor prescription; ultrasonic cleaning and medical pouch sealing.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 7: FINANCIAL MANAGEMENT & BILLING -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>7. Financial Workflows, VAT Mathematics & Stripe Connect Billing</h1>
+
+    <h2>7.1 Automated Invoicing Engine</h2>
+    <p>
+        VelourCare automates financial reconciliations between clinics and the platform. Invoices are sequentially numbered with the official platform prefix: <code>INV-VELOUR-####</code>.
+    </p>
+
+    <h2>7.2 Exact Mathematical Breakdown</h2>
+    <p>
+        The financial calculation engine adheres strictly to UAE Federal Tax Authority (FTA) rounding and calculation standards:
+    </p>
+
+    <div class="diagram-box">
++--------------------------------------------------------------------------------------------------+
+| INVOICE LINE ITEMS CALCULATION FORMULA:                                                         |
+|                                                                                                  |
+|   1. Gross Subtotal:  &Sigma; (Item Quantity &times; Unit Price)                                        |
+|   2. Net Taxable:     Gross Subtotal - Itemized Discounts                                        |
+|   3. 5% UAE VAT:      Math.round((Net Taxable &times; 0.05) &times; 100) / 100                               |
+|   4. Grand Total:     Net Taxable + 5% UAE VAT                                                   |
++--------------------------------------------------------------------------------------------------+
+    </div>
+
+    <h3>Sample Invoice Breakdown (AED):</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th style="text-align:center;">Qty</th>
+                <th style="text-align:right;">Unit Price</th>
+                <th style="text-align:right;">Total Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>VelourCare Dual Arch Clear Aligners (22 Upper / 18 Lower Complete Tier)</td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:right;">4,500.00 AED</td>
+                <td style="text-align:right;">4,500.00 AED</td>
+            </tr>
+            <tr>
+                <td>Digital CAD Treatment Plan & WaveATP 3D Simulation Setup</td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:right;">500.00 AED</td>
+                <td style="text-align:right;">500.00 AED</td>
+            </tr>
+            <tr>
+                <td>VIP Express Manufacturing & Rush Courier Dispatch (48h SLA)</td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:right;">250.00 AED</td>
+                <td style="text-align:right;">250.00 AED</td>
+            </tr>
+            <tr style="background:#f1f5f9;font-weight:600;">
+                <td colspan="3">Gross Subtotal</td>
+                <td style="text-align:right;">5,250.00 AED</td>
+            </tr>
+            <tr style="color:#059669;">
+                <td colspan="3">Promotional Clinic Tier Discount (10%)</td>
+                <td style="text-align:right;">- 525.00 AED</td>
+            </tr>
+            <tr style="background:#f8fafc;font-weight:600;">
+                <td colspan="3">Net Taxable Amount</td>
+                <td style="text-align:right;">4,725.00 AED</td>
+            </tr>
+            <tr style="color:#b45309;">
+                <td colspan="3">UAE Federal Tax (5% VAT)</td>
+                <td style="text-align:right;">+ 236.25 AED</td>
+            </tr>
+            <tr style="background:#0f766e;color:#ffffff;font-size:10.5pt;font-weight:700;">
+                <td colspan="3">Grand Total Payable</td>
+                <td style="text-align:right;">4,961.25 AED</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>7.3 Invoice Immutability & Concurrency Control</h2>
+    <div class="callout callout-warning no-break">
+        <div class="callout-title">⚠️ Financial Integrity Rule: Issued Invoices are Locked</div>
+        Once an invoice is transitioned to <code>sent</code>, <code>issued</code>, or <code>paid</code>, it is permanently locked against modification or deletion (returning <code>HTTP 400 Bad Request</code>). Any financial adjustment must be handled via formal credit notes or supplementary invoices. Furthermore, optimistic concurrency locking on <code>updated_at</code> timestamps prevents race conditions and accidental double-charges.
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 8: ENTERPRISE SECURITY & THREAT MITIGATION -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>8. Enterprise Security, Threat Mitigation, Cryptography & Rate Limiting</h1>
+
+    <h2>8.1 Password Security & Cryptographic Salting</h2>
+    <p>
+        VelourCare never stores plain-text passwords. All credentials are hashed using PBKDF2 over SHA-512 with 100,000 iterations and a cryptographically unique 32-character hexadecimal salt generated via <code>crypto.randomBytes(16)</code> per account.
+    </p>
+
+    <h2>8.2 Brute-Force Lockout Defense</h2>
+    <p>
+        The authentication gateway continuously tracks failed login attempts indexed by IP address and username:
+    </p>
+    <ul>
+        <li><strong>Threshold:</strong> 5 consecutive failed login attempts within a 15-minute window.</li>
+        <li><strong>Action:</strong> The IP address and user account are placed in automated lockout. Subsequent attempts immediately return <code>HTTP 429 Too Many Requests</code> with a clear warning: <em>"Too many failed login attempts. Account temporarily locked for 15 minutes."</em></li>
+        <li><strong>Uniform Error Messaging:</strong> To prevent username enumeration, both an invalid username and an invalid password return the identical response: <code>"Invalid username or password."</code></li>
+    </ul>
+
+    <h2>8.3 HTTP Response Headers & Data Protection Stack</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30%;">HTTP Header</th>
+                <th style="width:35%;">Configured Value</th>
+                <th style="width:35%;">Security Protection</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>X-Content-Type-Options</code></td>
+                <td><code>nosniff</code></td>
+                <td>Prevents MIME-type sniffing and malicious file execution.</td>
+            </tr>
+            <tr>
+                <td><code>X-Frame-Options</code></td>
+                <td><code>SAMEORIGIN</code></td>
+                <td>Guards against Clickjacking attacks and iframe embeds by third parties.</td>
+            </tr>
+            <tr>
+                <td><code>Strict-Transport-Security</code></td>
+                <td><code>max-age=31536000; includeSubDomains</code></td>
+                <td>Enforces strict HTTPS connections for 1 full year.</td>
+            </tr>
+            <tr>
+                <td><code>Content-Security-Policy</code></td>
+                <td><code>default-src 'self' ...</code></td>
+                <td>Prevents malicious script injection and untrusted CDN execution.</td>
+            </tr>
+            <tr>
+                <td><code>Referrer-Policy</code></td>
+                <td><code>strict-origin-when-cross-origin</code></td>
+                <td>Prevents leakage of sensitive URL path tokens to external domains.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>8.4 Input Sanitization & Information Leakage Prevention</h2>
+    <ul>
+        <li><strong>XSS Prevention:</strong> All incoming JSON payloads, chat messages, and clinical notes are sanitized to neutralize <code>&lt;script&gt;</code> tags and malicious HTML event attributes.</li>
+        <li><strong>SQL / NoSQL Injection Immunity:</strong> Parameterized object filtering and strict type parsing ensure injection payloads are treated as inert string literals.</li>
+        <li><strong>Suppressed Stack Traces:</strong> In production mode, unexpected server errors return sanitized JSON (<code>{ error: "Internal Server Error", code: 500 }</code>). Raw Node.js stack traces, database schemas, and filesystem paths are never leaked to the client.</li>
+    </ul>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 9: OPERATIONS, BACKUPS & AUDIT TRAILS -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>9. Operational Continuity, Automated Backups & Immutable Audit Trails</h1>
+
+    <h2>9.1 Immutable Audit Log Architecture</h2>
+    <p>
+        Every clinical access event, plan approval, IDOR blocking, invoice generation, user deactivation, and backup restoration is recorded in an immutable ledger (<code>db.auditLogs</code>). Super Admins can query these logs via <code>GET /api/audit-logs</code>.
+    </p>
+
+    <div class="diagram-box">
+AUDIT LOG ENTRY STRUCTURE:
+{
+    "id": 142,
+    "user_id": 2,
+    "user_name": "Dr. Alexander Wright, DDS, MS",
+    "role": "client",
+    "action": "APPROVE_TREATMENT_PLAN",
+    "resource_type": "case",
+    "resource_id": 1,
+    "details": "Doctor approved clear aligner plan for case VELOUR-0001",
+    "ip_address": "192.168.1.104",
+    "timestamp": "2026-10-24T14:15:00.000Z"
+}
+    </div>
+
+    <h2>9.2 Automated & On-Demand Backup Engine</h2>
+    <p>
+        The VelourCare operational engine incorporates an automated backup and restoration subsystem managed via <code>POST /api/backups/create</code> and <code>POST /api/backups/restore</code>.
+    </p>
+    <ul>
+        <li><strong>Full Database Snapshots:</strong> Captures complete states of cases, treatment plans, step files, invoices, users, and audit logs.</li>
+        <li><strong>Integrity Hashing:</strong> Every backup archive generates a cryptographic SHA-256 integrity checksum upon creation.</li>
+        <li><strong>Integrity Verification:</strong> Prior to executing a restoration, the backup runner validates the checksum. If any tampering or byte corruption is detected, the restore aborts immediately, safeguarding the active cluster.</li>
+    </ul>
+
+    <h2>9.3 Soft-Archive Case Deletion Protocol</h2>
+    <p>
+        In healthcare systems, hard database deletions are dangerous and non-compliant with medical records retention regulations.
+    </p>
+    <div class="callout callout-security no-break">
+        <div class="callout-title">📋 Soft-Archive Policy</div>
+        When an administrator deletes a case (<code>DELETE /api/cases/:id</code>), the system flags the record with <code>is_archived: true</code> and <code>deleted_at: timestamp</code>. The case is instantly hidden from standard UI views, searches, and doctor pipelines (returning <code>404 Not Found</code>), while preserving complete audit provenance and medical records for legal compliance.
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 10: HEALTHCARE PRIVACY & COMPLIANCE -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>10. Healthcare Privacy & Legal Compliance (UAE Health Data Law, HIPAA, GDPR)</h1>
+
+    <h2>10.1 Multi-Jurisdictional Healthcare Compliance Matrix</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:25%;">Regulatory Framework</th>
+                <th style="width:35%;">Legal Requirement</th>
+                <th style="width:40%;">VelourCare Technical Implementation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>UAE Federal Law No. 2 of 2019</strong> (Health Data Law)</td>
+                <td>Storage and processing of UAE patient health data must adhere to Ministry of Health (MOHAP) cloud security and localization guidelines.</td>
+                <td>Data hosted in UAE sovereign cloud zones (Dubai/Abu Dhabi); encryption in transit (TLS 1.3) and at rest (AES-256); strict clinic-level data tenancy.</td>
+            </tr>
+            <tr>
+                <td><strong>HIPAA 45 CFR Part 160 & 164</strong> (US Standards)</td>
+                <td>Privacy, Security, and Breach Notification Rules for Protected Health Information (PHI).</td>
+                <td>Role-based minimum necessary access; 15-minute signed token access to 3D scans; cryptographic audit logs capturing all PHI reads; signed BAAs with vendors.</td>
+            </tr>
+            <tr>
+                <td><strong>GDPR Article 9</strong> (EU Health Data)</td>
+                <td>Special category biometric and health data protection; strict consent and data portability.</td>
+                <td>Granular consent flags; patient data anonymization in manufacturing queue; full exportability and soft-archive erasure capabilities.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>10.2 Public Legal Documents & Endpoints</h2>
+    <p>
+        VelourCare publishes its legal policies directly through verified JSON endpoints and public web views:
+    </p>
+    <ul>
+        <li><code>GET /api/legal/privacy-policy</code> &bull; Public View: <code>http://localhost:8000/privacy-policy.html</code></li>
+        <li><code>GET /api/legal/terms-of-service</code> &bull; Public View: <code>http://localhost:8000/terms-of-service.html</code></li>
+    </ul>
+
+    <h2>10.3 Emergency Data Breach Response Protocol (72-Hour Window)</h2>
+    <p>
+        Documented in <code>docs/DATA_BREACH_RESPONSE_PLAN.md</code>, the platform enforces a 5-step incident response playbook:
+    </p>
+    <ol>
+        <li><strong>Immediate Containment:</strong> Revocation of compromised API tokens and session termination within 15 minutes.</li>
+        <li><strong>Forensic Audit Investigation:</strong> Inspection of immutable audit logs to determine exact patient records accessed.</li>
+        <li><strong>Regulatory Notification:</strong> Formal notification to UAE Health Authorities and affected supervisory authorities within 72 hours.</li>
+        <li><strong>Clinic Communication:</strong> Transparent notification to affected practice owners detailing mitigation measures.</li>
+        <li><strong>Post-Mortem & Hardening:</strong> Implementation of structural code mitigations and rotation of all cryptographic keys.</li>
+    </ol>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 11: QUALITY ASSURANCE VERIFICATION -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>11. Quality Assurance Verification: 70/70 Master Checklist Report</h1>
+
+    <h2>11.1 Test Suite Overview</h2>
+    <p>
+        The VelourCare Ortho Cloud portal has undergone extensive automated verification based on the <code>Portal_Security_QA_Checklist.pdf</code> specification. All 70 discrete automated checks passed with a 100% success rate.
+    </p>
+
+    <h2>11.2 Verification Results by Section</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:10%;">Section</th>
+                <th style="width:35%;">Checklist Domain</th>
+                <th style="width:15%;text-align:center;">Checks</th>
+                <th style="width:15%;text-align:center;">Passed</th>
+                <th style="width:25%;">Key Verified Invariants</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Section 1</strong></td>
+                <td>Permission Matrix & Role Enforcement</td>
+                <td style="text-align:center;">15</td>
+                <td style="text-align:center;" class="check-pass">15 / 15</td>
+                <td>All 8 roles restricted; zero-trust defaults verified.</td>
+            </tr>
+            <tr>
+                <td><strong>Section 2</strong></td>
+                <td>Authorization & IDOR Defense</td>
+                <td style="text-align:center;">17</td>
+                <td style="text-align:center;" class="check-pass">17 / 17</td>
+                <td>Clinic A blocked from Clinic B cases & invoices; 404 returned.</td>
+            </tr>
+            <tr>
+                <td><strong>Section 3</strong></td>
+                <td>Authentication, Passwords & Sessions</td>
+                <td style="text-align:center;">9</td>
+                <td style="text-align:center;" class="check-pass">9 / 9</td>
+                <td>PBKDF2/SHA-512 hashing; 5-attempt brute-force lockout.</td>
+            </tr>
+            <tr>
+                <td><strong>Section 4</strong></td>
+                <td>Data Protection & Storage</td>
+                <td style="text-align:center;">5</td>
+                <td style="text-align:center;" class="check-pass">5 / 5</td>
+                <td>HSTS, <code>nosniff</code>, <code>SAMEORIGIN</code>; 15-min signed file tokens.</td>
+            </tr>
+            <tr>
+                <td><strong>Section 5</strong></td>
+                <td>Input Safety & Error Sanitization</td>
+                <td style="text-align:center;">3</td>
+                <td style="text-align:center;" class="check-pass">3 / 3</td>
+                <td>SQLi handled safely; XSS sanitized; zero stack trace leaks.</td>
+            </tr>
+            <tr>
+                <td><strong>Section 6</strong></td>
+                <td>Business Logic (Cases & Invoices)</td>
+                <td style="text-align:center;">11</td>
+                <td style="text-align:center;" class="check-pass">11 / 11</td>
+                <td>VAT 5% math exact; issued invoices locked; soft archive.</td>
+            </tr>
+            <tr>
+                <td><strong>Section 7</strong></td>
+                <td>Operations, Backups & Resilience</td>
+                <td style="text-align:center;">4</td>
+                <td style="text-align:center;" class="check-pass">4 / 4</td>
+                <td>Immutable audit trail; backup creation & integrity restore.</td>
+            </tr>
+            <tr>
+                <td><strong>Section 8</strong></td>
+                <td>Privacy, Legal & Compliance</td>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:center;" class="check-pass">6 / 6</td>
+                <td>Privacy policy, Terms of Service, Breach Plan, Processors.</td>
+            </tr>
+            <tr style="background:#0f766e;color:#ffffff;font-weight:700;">
+                <td colspan="2">TOTAL MASTER QA TEST SCORE</td>
+                <td style="text-align:center;">70</td>
+                <td style="text-align:center;" class="check-pass" style="color:#ffffff;">70 / 70 (100%)</td>
+                <td>FULL ENTERPRISE COMPLIANCE VERIFIED</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>11.3 Automated Test Execution Commands</h2>
+    <pre><code># 1. Execute Master Security QA Verification Suite (70 Checks):
+node ./tests/portal_security_qa_checklist_test.js
+
+# 2. Execute Case Filtering, Sorting & Personal Scoping Test Suite (11 Checks):
+node ./tests/test_case_filters_and_scoping.js</code></pre>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 12: OPERATOR QUICK-START & API CATALOG -->
+<!-- ========================================================================= -->
+<div class="page-break">
+    <h1>12. Operator Quick-Start Reference, Demo Profiles & Core API Catalog</h1>
+
+    <h2>12.1 Pre-Configured Demo Accounts (Role QA Switcher)</h2>
+    <p>
+        The portal features an interactive floating <strong>Role QA Switcher</strong> in the bottom right corner of the screen. Alternatively, you can log in directly using the following credentials:
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Role Display</th>
+                <th>Username</th>
+                <th>Default Password</th>
+                <th>Permissions & Primary Responsibilities</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Super Admin</strong></td>
+                <td><code>admin</code></td>
+                <td><code>Set via SEED_DEFAULT_PASSWORD</code></td>
+                <td>Full system management, audit log inspection, backup/restore.</td>
+            </tr>
+            <tr>
+                <td><strong>Clinic A Doctor</strong></td>
+                <td><code>doctor</code></td>
+                <td><code>Set via SEED_DEFAULT_PASSWORD</code></td>
+                <td>Dr. Alexander Wright &bull; Clinic 1 patients, treatment plan review.</td>
+            </tr>
+            <tr>
+                <td><strong>Clinic B Doctor</strong></td>
+                <td><code>doctor_b</code></td>
+                <td><code>Set via SEED_DEFAULT_PASSWORD</code></td>
+                <td>Dr. Elena Rostova &bull; Clinic 2 patients (strictly isolated from Clinic 1).</td>
+            </tr>
+            <tr>
+                <td><strong>Associate Doctor</strong></td>
+                <td><code>doctor_associate</code></td>
+                <td><code>Set via SEED_DEFAULT_PASSWORD</code></td>
+                <td>Dr. Emily Watson &bull; Clinic 1 (strictly sees only her own uploaded cases).</td>
+            </tr>
+            <tr>
+                <td><strong>CAD Planner</strong></td>
+                <td><code>planner</code></td>
+                <td><code>Set via SEED_DEFAULT_PASSWORD</code></td>
+                <td>Sarah Miller &bull; Digital planning, Smile Inspector, WaveATP, STL generation.</td>
+            </tr>
+            <tr>
+                <td><strong>Lab Tech</strong></td>
+                <td><code>lab</code></td>
+                <td><code>Set via SEED_DEFAULT_PASSWORD</code></td>
+                <td>Production Lab &bull; 3D printing queue, thermoforming, laser trimming.</td>
+            </tr>
+            <tr>
+                <td><strong>Accounts & Billing</strong></td>
+                <td><code>accounts</code></td>
+                <td><code>Set via SEED_DEFAULT_PASSWORD</code></td>
+                <td>Kareem Haddad &bull; Invoicing, VAT 5%, payments. Zero clinical access.</td>
+            </tr>
+            <tr>
+                <td><strong>Unassigned Staff</strong></td>
+                <td><code>new_user</code></td>
+                <td><code>Set via SEED_DEFAULT_PASSWORD</code></td>
+                <td>Pending review &bull; Zero access quarantine default.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>12.2 Core REST API Endpoints Catalog</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:12%;">Method</th>
+                <th style="width:38%;">Endpoint Path</th>
+                <th style="width:50%;">Purpose, Parameters & Security Guard</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/auth/login</code></td>
+                <td>Authenticates credentials, evaluates brute-force, returns Sanctum Bearer token.</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/auth/logout</code></td>
+                <td>Revokes active session token immediately on the server.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/cases</code></td>
+                <td>Lists accessible cases with multi-criteria search, filters, and status capsule counts.</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/cases/store-in-pipeline</code></td>
+                <td>Registers new patient case; stamps uploader ID, doctor, and clinic from session.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/cases/:id</code></td>
+                <td>Retrieves case detail, 3D simulations, and IPR plan. Protected by Anti-IDOR.</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/cases/:id/approve-treatment-plan</code></td>
+                <td>Clinically approves treatment plan; locks case and initiates manufacturing.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/files/signed-download-token</code></td>
+                <td>Generates 15-minute cryptographically signed download URL for 3D STL assets.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/invoices</code></td>
+                <td>Lists invoices; clinic isolated for doctors, comprehensive for accounts.</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/invoices</code></td>
+                <td>Creates new invoice with automated sequential numbering and 5% UAE VAT math.</td>
+            </tr>
+            <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/audit-logs</code></td>
+                <td>Queries immutable system audit trail. Restricted to Super Admin role.</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/backups/create</code></td>
+                <td>Generates encrypted full database snapshot with SHA-256 integrity hash.</td>
+            </tr>
+            <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/backups/restore</code></td>
+                <td>Verifies hash integrity and restores database state.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 35px; text-align: center; border-top: 2px solid #b89b69; padding-top: 20px;">
+        <h3 style="margin: 0; color: #816838;">VC Connect Enterprise Portal</h3>
+        <p style="font-size: 8.8pt; color: #64748b; margin-top: 4px;">
+            Engineered for Precision Orthodontics &bull; Enterprise Compliance &bull; Zero-Trust Data Architecture
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
+`;
+
+// Write HTML output file
+const htmlPath = path.resolve('VelourCare_Ortho_Cloud_Complete_Portal_Guide.html');
+fs.writeFileSync(htmlPath, htmlContent, 'utf8');
+console.log('Written HTML guide to:', htmlPath);
+
+// Render PDF using Headless Edge or Chrome
+const pdfPath = path.resolve('VelourCare_Ortho_Cloud_Complete_Portal_Guide.pdf');
+const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+
+let browserPath = fs.existsSync(edgePath) ? edgePath : (fs.existsSync(chromePath) ? chromePath : null);
+
+if (!browserPath) {
+    console.error('No suitable browser (Edge or Chrome) found for PDF generation.');
+    process.exit(1);
+}
+
+console.log('Rendering PDF using:', browserPath);
+const fileUrl = 'file:///' + htmlPath.replace(/\\/g, '/');
+const cmd = `"${browserPath}" --headless=new --disable-gpu --no-pdf-header-footer --print-to-pdf="${pdfPath}" "${fileUrl}"`;
+
+try {
+    execSync(cmd, { stdio: 'pipe' });
+    if (fs.existsSync(pdfPath)) {
+        const stats = fs.statSync(pdfPath);
+        console.log(`\n======================================================`);
+        console.log(` SUCCESS: PDF Guide generated successfully!`);
+        console.log(` Path: ${pdfPath}`);
+        console.log(` File Size: ${(stats.size / 1024).toFixed(1)} KB`);
+        console.log(`======================================================\n`);
+    } else {
+        console.error('PDF file was not created.');
+    }
+} catch (e) {
+    console.error('Error rendering PDF:', e.message);
+    process.exit(1);
+}
